@@ -3,10 +3,13 @@ var Schema = mongoose.Schema;
 
 var schema = new Schema({
    
+   
     cart: {type: Object, required: true},
-
-    user: {type: Schema.Types.ObjectId, ref: 'User'},
-
+    email: {type: String, required: true},
+    userId: {type: String, required: true},
+    buyerName:{type:String,required:true},
+    buyerMobile:{type:String,required:true},
+    amount: {type: Number, required: true},
     paymentId: {type: String, required: true}
 });
 

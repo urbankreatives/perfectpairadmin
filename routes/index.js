@@ -106,6 +106,8 @@ router.get('/orderVI',isLoggedIn, function(req,res){
     
   
      cart2.push(docs[i].cart)
+     let name = docs[i].buyerName
+     let mobile = docs[i].buyerMobile
     
      if(i == size){
       console.log(cart2.length, 'cart length')
@@ -190,8 +192,11 @@ router.get('/orderVI',isLoggedIn, function(req,res){
     ord.type = ord6[q].item.type
     ord.id = ord6[q].item._id
     ord.price = ord6[q].price
-
+    ord.buyerName = name
+    ord.buyerMobile = mobile
     ord.qty = ord6[q].qty
+    ord.status = ord6[q].status
+    ord.date = ord6[q].date
 
     ord.save()
   
@@ -786,162 +791,9 @@ router.get('/addCategory',isLoggedIn,function(req,res){
          
   
   
-    /*
-    router.get('/import',function(req,res){
-      res.render('imports')
-    })
-    
   
-    
-    router.post('/import', upload.single('file'),  (req,res)=>{
-     
-    
-      if(!req.file){
-          req.session.message = {
-            type:'errors',
-            message:'Select File!'
-          }     
-            res.render('imports/students', {message:req.session.message}) 
-          }else if (req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-              req.session.message = {
-                  type:'errors',
-                  message:'Upload Excel File'
-                }     
-                  res.render('imports', {message:req.session.message
-                       
-                   }) 
-    
-    
-    
-          }
-            
-          else{
-       
-  
-          
-              const file = req.file.filename;
-      
-              
-                   var wb =  xlsx.readFile('./public/uploads/' + file)
-           
-                   var sheets = wb.Sheets;
-                   var sheetNames = wb.SheetNames;
-       
-                   var sheetName = wb.SheetNames[0];
-       var sheet = wb.Sheets[sheetName ];
-       
-          for (var i = 0; i < wb.SheetNames.length; ++i) {
-           var sheet = wb.Sheets[wb.SheetNames[i]];
-       
-           console.log(wb.SheetNames.length)
-           var data =xlsx.utils.sheet_to_json(sheet)
-               
-           var newData = data.map(async function (record){
-       
-          
-         
-        
-            
-           
-  
-  
-            
-  
-  req.body.name = record.name     
-  req.body.price = record.price  
-  req.body.description = record.description 
-  req.body.status = record.status  
-  req.body.category = record.category  
-  req.body.title = record.title
-  req.body.filename = record.filename  
-             
-  
-              
-          
-              try{
-                req.check('price','Enter price').notEmpty();
-                req.check('name','Enter Name').notEmpty();
-                req.check('description','Enter Description').notEmpty();
-                req.check('status','Enter status').notEmpty();
-                req.check('title','Enter Title').notEmpty();
-                req.check('filename','Enter Filename').notEmpty();
-             
-  
-  
-                var errors = req.validationErrors();
-    
-                if (errors) {
-                  
-                  req.session.errors = errors;
-                  req.session.success = false;
-                  for(let x=0;x<req.session.errors.length;x++){
-                    throw new SyntaxError(req.session.errors[x].msg +" "+"on line")
-                  }
-                
-            }
-  
-  
-        
-          
-            var product = new Product();
-                    product.name = req.body.name;
-                    product.price = req.body.price
-                    product.description = req.body.description;
-                    product.status = req.body.status;
-                    product.category= req.body.category;
-                    product.title = req.body.title
-                    product.filename = req.body.filename;
-              
-                  
-                   
-                    product.save()
-                      .then(productId =>{
-  
-                     
-                      })
-               
-                       
-                   
-                       
-                     
-                      // .catch(err => console.log(err))
-                    }
-                    catch(e){
-                      res.send(e.message)
-                     }
-                      })
-                    
-                    
-           
-                    }
-                    
-                    
-                      
-                      
-          
-                     
-          
-                      
-               
-                  }
-        
-          
-    
-    
-    })
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  */
-  
-  
-  
+
+
   
   
   
@@ -950,7 +802,7 @@ router.get('/addCategory',isLoggedIn,function(req,res){
 router.get('/addProducts',function(req,res){
    
     Product.find(function(err,docs){
-        res.render('add',{products:docs})
+        res.render('imports',{products:docs})
     })
     
 })
@@ -961,190 +813,146 @@ router.get('/addProducts',function(req,res){
 
 router.post('/addProducts',upload.single('file'),function(req, res, next) {
 
-  
-        req.check('name','Enter Product Name').notEmpty();
-        req.check('price','Enter Price').notEmpty().isNumeric();
-        req.check('description','Enter Description').notEmpty();
-        req.check('color','Enter Color').notEmpty();
-        req.check('category1','Enter Category').notEmpty();
-    
-    
-        if(!req.file){
-           
-            
-              req.session.message = {
-                type:'errors',
-                message:'Select File!'
-              }     
-                res.render('add', {message:req.session.message
-                })
-           
+          
+  if(!req.file){
+    req.session.message = {
+      type:'errors',
+      message:'Select File!'
+    }     
+      res.render('imports', {message:req.session.message}) 
+    }else if (req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
+        req.session.message = {
+            type:'errors',
+            message:'Upload Excel File'
+          }     
+            res.render('imports', {message:req.session.message
                  
-                }
-                   
-    var errors = req.validationErrors();
-    if (errors) {
-   
+             }) 
+
+
+
+    }
+      
+    else{
+ 
+
     
-      req.session.errors = errors;
-      req.session.success = false;
-      res.render('add',{ errors:req.session.errors})
+        const file = req.file.filename;
+
+        
+             var wb =  xlsx.readFile('./public/uploads/' + file)
+     
+             var sheets = wb.Sheets;
+             var sheetNames = wb.SheetNames;
+ 
+             var sheetName = wb.SheetNames[0];
+ var sheet = wb.Sheets[sheetName ];
+ 
+    for (var i = 0; i < wb.SheetNames.length; ++i) {
+     var sheet = wb.Sheets[wb.SheetNames[i]];
+ 
+     console.log(wb.SheetNames.length)
+     var data =xlsx.utils.sheet_to_json(sheet)
+         
+     var newData = data.map(async function (record){
+ 
+    
+   
+  
+      
+     
+
+
+      
+
+req.body.name = record.name     
+req.body.price = record.price  
+req.body.type = record.price  
+req.body.description = record.description 
+req.body.status = record.status  
+req.body.category = record.category  
+req.body.price2 = record.price2
+req.body.zwl = record.zwl
+req.body.filename = record.filename  
+       
+
         
     
-    }
-    
-                else{
-                    const imageFile = req.file.filename;
+        try{
+          req.check('price','Enter price').notEmpty();
+          req.check('name','Enter Name').notEmpty();
+          req.check('description','Enter Description').notEmpty();
+          req.check('status','Enter status').notEmpty();
+          req.check('category','Enter Category').notEmpty();
+          req.check('filename','Enter Filename').notEmpty();
+          req.check('price2','Enter Price2').notEmpty();
+          req.check('type','Enter Product Type').notEmpty();
+          req.check('zwl','Enter ZWL rate').notEmpty();
+       
+
+
+          var errors = req.validationErrors();
+
+          if (errors) {
             
-                    var product = new Product();
-                            product.name = req.body.name;
-                            product.price = req.body.price
-                            product.description = req.body.description;
-                           
-                            product.category= req.body.category1;
-                            product.color = req.body.color;
-                            product.filename = imageFile;
-                            product.status = 'new'
-                      
-                          
-                           
-                            product.save()
-                              .then(productId =>{
-    
-                                res.redirect('/addX')
-                              })
-                            }
-               
-    })
+            req.session.errors = errors;
+            req.session.success = false;
+            for(let x=0;x<req.session.errors.length;x++){
+              throw new SyntaxError(req.session.errors[x].msg +" "+"on line")
+            }
+          
+      }
+
 
   
     
-    router.get('/importMake',isLoggedIn,function(req,res){
-      var pro = req.user
-      res.render('importmak',{pro:pro})
-    })
-    
-  
-    
-    router.post('/importMake',isLoggedIn, upload.single('file'),  (req,res)=>{
-      var pro = req.user
-    
-      if(!req.file){
-          req.session.message = {
-            type:'errors',
-            message:'Select File!'
-          }     
-            res.render('importmak', {message:req.session.message}) 
-          }else if (req.file.mimetype !== 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'){
-              req.session.message = {
-                  type:'errors',
-                  message:'Upload Excel File'
-                }     
-                  res.render('importmak', {message:req.session.message,pro:pro
-                       
-                   }) 
-    
-    
-    
-          }
-            
-          else{
-       
-  
-          
-              const file = req.file.filename;
-      
-              
-                   var wb =  xlsx.readFile('./public/uploads/' + file)
-           
-                   var sheets = wb.Sheets;
-                   var sheetNames = wb.SheetNames;
-       
-                   var sheetName = wb.SheetNames[0];
-       var sheet = wb.Sheets[sheetName ];
-       
-          for (var i = 0; i < wb.SheetNames.length; ++i) {
-           var sheet = wb.Sheets[wb.SheetNames[i]];
-       
-           console.log(wb.SheetNames.length)
-           var data =xlsx.utils.sheet_to_json(sheet)
-               
-           var newData = data.map(async function (record){
-       
-          
-         
+      var product = new Product();
+              product.name = req.body.name;
+              product.price = req.body.price
+              product.description = req.body.description;
+              product.status = req.body.status;
+              product.category= req.body.category;
+              product.price2 = req.body.price2
+              product.type = req.body.type
+              product.zwl = req.body.zwl
+              product.filename = req.body.filename;
         
             
-           
-  
-  
-            
-  
-  req.body.name = record.name     
-  
              
-  
-              
-          
-              try{
-            
-                req.check('name','Enter Name').notEmpty();
-   
+              product.save()
+                .then(productId =>{
+
                
+                })
+         
+                 
              
-  
-  
-                var errors = req.validationErrors();
-    
-                if (errors) {
-                  
-                  req.session.errors = errors;
-                  req.session.success = false;
-                  for(let x=0;x<req.session.errors.length;x++){
-                    throw new SyntaxError(req.session.errors[x].msg +" "+"on line")
-                  }
+                 
+               
+                // .catch(err => console.log(err))
+              }
+              catch(e){
+                res.send(e.message)
+               }
+                })
+              
+              
+     
+              }
+              
+              
                 
+                
+    
+               
+    
+                
+         
             }
   
-  
-        
-          
-            var product = new Make();
-                    product.name = req.body.name;
-                   
-              
-                  
-                   
-                    product.save()
-                      .then(productId =>{
-  
-                     
-                      })
-               
-                       
-                   
-                       
-                     
-                      // .catch(err => console.log(err))
-                    }
-                    catch(e){
-                      res.send(e.message)
-                     }
-                      })
-                    
-                    
-           
-                    }
-                    
-                    
-                      
-                      
-          
-                     
-          
-                      
-               
-                  }
+    
+
+
         
           
     

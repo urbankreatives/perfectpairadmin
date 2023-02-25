@@ -9,7 +9,10 @@ var schema = new Schema({
     type: {type: String, required: true},
     id:{type:String, required:true},
     qty: {type: Number, required: true},
-  
+    buyerName:{type:String, required:true},
+    buyerMobile:{type:String, required:true},
+    status:{type:String,required:true},
+    date:{type:String,required:true},
     price: {type: Number, required: true},
 
   
