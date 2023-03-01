@@ -10,7 +10,7 @@ var schema = new Schema({
     buyerName:{type:String,required:true},
     buyerMobile:{type:String,required:true},
     amount: {type: Number, required: true},
-    paymentId: {type: String, required: true}
+   
 });
 
 module.exports = mongoose.model('Order', schema);
