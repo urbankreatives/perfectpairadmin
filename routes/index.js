@@ -333,8 +333,7 @@ if(!err){
   router.get('/cstats',isLoggedIn,function(req,res){
     Order2.find({},function(err,docs){
       for(var i = 0; i<docs.length;i++){
-        let id = docs[i].id;
-        let name= docs[i].name
+
         let category = docs[i].category
   
         let type = docs[i].type
