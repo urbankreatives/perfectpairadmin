@@ -195,7 +195,12 @@ router.get('/orderVI',isLoggedIn, function(req,res){
     ord.buyerName = name
     ord.buyerMobile = mobile
     ord.qty = ord6[q].qty
+    ord.typeX=ord6[q].typeX
+    ord.size = ord6[q].size
+    ord.color = ord6[q].color
     ord.status = ord6[q].status
+    ord.status2 = ord6[q].status2
+    ord.status3 = ord6[q].status3
     ord.date = ord6[q].date
 
     ord.save()
@@ -237,7 +242,9 @@ if(!err){
         let id = docs[i].id;
         let name= docs[i].name
         let category = docs[i].category
-       
+        let color= docs[i].color
+        let size= docs[i].size
+        let typeX = docs[i].typeX
         let type = docs[i].type
   
         
@@ -249,6 +256,9 @@ if(!err){
             let ord = new PStats()
   
             ord.name =name
+            ord.color=color
+            ord.size=size
+            ord.typeX=typeX
             ord.id =id
             ord.qty = 0
             ord.category = category
@@ -866,13 +876,20 @@ router.post('/addProducts',upload.single('file'),function(req, res, next) {
 
 req.body.name = record.name     
 req.body.price = record.price  
-req.body.type = record.price  
+req.body.type = record.type 
 req.body.description = record.description 
 req.body.status = record.status  
+req.body.typeX = record.typeX 
 req.body.category = record.category  
 req.body.price2 = record.price2
 req.body.zwl = record.zwl
 req.body.filename = record.filename  
+req.body.sales = record.sales
+req.body.color = record.color
+req.body.quantity = record.quantity
+req.body.size = record.size
+req.body.status2 = record.status2
+req.body.status3 = record.status3
        
 
         
@@ -887,6 +904,12 @@ req.body.filename = record.filename
           req.check('price2','Enter Price2').notEmpty();
           req.check('type','Enter Product Type').notEmpty();
           req.check('zwl','Enter ZWL rate').notEmpty();
+          req.check('sales','Enter Sales').notEmpty();
+          req.check('color','Enter Color').notEmpty();
+          req.check('quantity','Enter Quantity').notEmpty();
+          req.check('size','Enter Size').notEmpty();
+          req.check('status2','Enter Status2').notEmpty();
+
        
 
 
@@ -913,8 +936,15 @@ req.body.filename = record.filename
               product.category= req.body.category;
               product.price2 = req.body.price2
               product.type = req.body.type
+              product.typeX = req.body.typeX
               product.zwl = req.body.zwl
               product.filename = req.body.filename;
+              product.sales = req.body.sales
+              product.color = req.body.color
+              product.quantity = req.body.quantity
+              product.size = req.body.size
+              product.status2 = req.body.status2
+              product.status3 = req.body.status3
         
             
              

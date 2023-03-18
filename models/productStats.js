@@ -8,7 +8,9 @@ var schema = new Schema({
     id: {type: String, required: true},
     qty: {type: Number, required: true},
     type: {type: String, required: true},
-
+    typeX: {type: String, required: true},
+    size: {type: String, required: true},
+    color: {type: String, required: true},
 
     category: {type: String, required: true}
 });
